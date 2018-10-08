@@ -1,18 +1,19 @@
 import os
 import cv2
 import requests
+import time
 
 
 def videoSlice(filename):
 
-    vc = cv2.VideoCapture(filename)  # 读入视频文件
+    vc = cv2.VideoCapture(os.getcwd()+filename)  # 读入视频文件
     c = 1
 
     if vc.isOpened():  # 判断是否正常打开
         rval, frame = vc.read()
     else:
         rval = False
-    img_dir = './imgs/' + filename.split('.')[0]
+    img_dir = './imgs/' + filename.split('/')[2].split('.')[0]+'/'
     time_f = 30  # 视频帧计数间隔频率
     if os.path.isdir(img_dir):
         pass
@@ -24,9 +25,39 @@ def videoSlice(filename):
             cv2.imwrite(img_dir +
                         str(c) + '.jpg', frame)  # 存储为图像
         c = c + 1
+        if c > 1000:
+            break
         # cv2.waitKey(1)
     vc.release()
 
 
+def uploadImg(dirname, url, cameraId):
+    # print(os.listdir(dirname))
+    for img in os.listdir(dirname):
+        file = {
+            'file': open(dirname+'/'+img, 'rb')
+        }
+        data = {
+            'sequenceId': 20181007001,
+            'cameraId': cameraId,
+            'frame': img.split('.')[0],
+        }
+        r = requests.post(url, data=data, files=file)
+        print(r.text)
+    pass
+
+
+def getTime():
+    return time.strftime('%Y%m%d', time.localtime(time.time()))
+
+
 if __name__ == '__main__':
-    videoSlice('newbx.avi')
+    # videoSlice(os.getcwd()+'/cameras/1.avi')
+    # uploadImg('./imgs/newbx/')
+    url = 'http://123.206.79.138:8806/picture/upload'
+    # uploadImg('./imgs/tree/',url)
+    t1 = time.time()
+    for cameras in os.listdir('./cameras'):
+        videoSlice('/cameras/' + cameras)
+        uploadImg('./imgs/'+cameras[0], url, cameraId=cameras.split('.')[0])
+    print('finish time:', time.time()-t1, 's')
