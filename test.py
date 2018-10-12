@@ -1,7 +1,7 @@
 import os
-import cv2
 import requests
 import time
+import cv2
 
 
 def videoSlice(filename):
@@ -29,6 +29,7 @@ def videoSlice(filename):
             break
         # cv2.waitKey(1)
     vc.release()
+    print('video '+ filename.split('/')[2] + ' processed finish')
 
 
 def uploadImg(dirname, url, cameraId):
@@ -59,5 +60,11 @@ if __name__ == '__main__':
     t1 = time.time()
     for cameras in os.listdir('./cameras'):
         videoSlice('/cameras/' + cameras)
-        uploadImg('./imgs/'+cameras[0], url, cameraId=cameras.split('.')[0])
+        uploadImg('./imgs/'+cameras.split('.')[0], url, cameraId=cameras.split('.')[0])
     print('finish time:', time.time()-t1, 's')
+
+
+'''
+finish time: 104.55991792678833 s
+finish time: 103.50239372253418 s
+'''
