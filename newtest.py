@@ -107,4 +107,5 @@ if __name__ == '__main__':
 
 '''
 finish time: 82.94696140289307 s
+finish time: 81.69378399848938 s
 '''
